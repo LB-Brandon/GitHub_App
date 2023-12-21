@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -5,12 +7,11 @@ plugins {
 
 android {
     namespace = "com.brandon.github_app"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.brandon.github_app"
         minSdk = 29
-        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
@@ -24,6 +25,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            android.buildFeatures.buildConfig = true
+            buildConfigField("String", "API_KEY", getApiKey("API_KEY"))
         }
     }
     compileOptions {
@@ -46,8 +51,13 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+}
+
+fun getApiKey(propertyKey: String): String {
+    return gradleLocalProperties(rootDir).getProperty(propertyKey)
 }
